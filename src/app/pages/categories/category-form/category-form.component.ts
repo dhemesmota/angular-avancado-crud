@@ -43,6 +43,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   submitForm() {
     this.submittingForm = true;
 
+    // tslint:disable-next-line:triple-equals
     if (this.currentAction == 'new') {
       this.createCategory();
     } else {
@@ -52,6 +53,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
   // PRIVATE METHODS
   private setCurrentAction() {
+    // tslint:disable-next-line:triple-equals
     if (this.route.snapshot.url[0].path == 'new') {
       this.currentAction = 'new';
     } else {
@@ -68,6 +70,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   }
 
   private loadCategory() {
+    // tslint:disable-next-line:triple-equals
     if (this.currentAction == 'edit') {
 
       this.route.paramMap.pipe(
@@ -84,6 +87,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   }
 
   private setPageTitle() {
+    // tslint:disable-next-line:triple-equals
     if (this.currentAction == 'new') {
       this.pageTitle = 'Cadastro de Nova Categoria';
     } else {
@@ -97,6 +101,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
     this.categoryService.create(category)
       .subscribe(
+        // tslint:disable-next-line:no-shadowed-variable
         category => this.actionsForSuccess(category),
         error => this.actionsForError(error)
       );
@@ -107,6 +112,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
     this.categoryService.update(category)
     .subscribe(
+      // tslint:disable-next-line:no-shadowed-variable
       category => this.actionsForSuccess(category),
       error => this.actionsForError(error)
     );
@@ -129,7 +135,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
     if (error.status === 422) {
       this.serverErrorMessages = JSON.parse(error._body).errors;
     } else {
-      this.serverErrorMessages = ['Falha na comunicação com o servidor. Por favor, teste mais tarde.'];
+      this.serverErrorMessages = ['Falha na comunicação com o servidor. Por favor, tente mais tarde.'];
     }
   }
 
