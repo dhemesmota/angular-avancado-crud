@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
-import { map, catchError, flatMap } from 'rxjs/operators';
+import { map, catchError, flatMap, share } from 'rxjs/operators';
+
+// Essa parte só é necessária quando não tiver um back-end configurado
+import { CategoryService } from '../../categories/shared/category.service';
 
 import { Entry } from './entry.model';
 
@@ -14,7 +17,10 @@ export class EntryService {
     // tslint:disable-next-line:no-inferrable-types
     private apiPath: string = 'api/entries';
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private categoryService: CategoryService
+        ) { }
 
     getAll(): Observable<Entry[]> {
         return this.http.get(this.apiPath).pipe(
@@ -34,20 +40,52 @@ export class EntryService {
 
 
     create(entry: Entry): Observable<Entry> {
+
+        // Essa parte só é necessario quando não tiver um back-end como por exemplo em php
+
+        return this.categoryService.getById(entry.categoryId).pipe(
+            flatMap(category => {
+                entry.category = category;
+
+                return this.http.post(this.apiPath, entry).pipe(
+                    catchError(this.handleError),
+                    map(this.jsonDataToEntry)
+                );
+            })
+        );
+
+        // End fim da parte desnecessaria
+        // Usar o bloco abaixo quando tiver o back-end
+        /*
         return this.http.post(this.apiPath, entry).pipe(
             catchError(this.handleError),
             map(this.jsonDataToEntry)
         );
+        */
     }
 
 
     update(entry: Entry): Observable<Entry> {
         const url = `${this.apiPath}/${entry.id}`;
 
+        // Essa parte só é necessario quando não tiver um back-end como por exemplo em php
+        return this.categoryService.getById(entry.categoryId).pipe(
+            flatMap(category => {
+                entry.category = category;
+
+                return this.http.put(url, entry).pipe(
+                    catchError(this.handleError),
+                    map(() => entry)
+                );
+            })
+        );
+        // End fim da parte desnecessaria
+        /*
         return this.http.put(url, entry).pipe(
             catchError(this.handleError),
             map(() => entry)
         );
+        */
     }
 
     delete(id: number): Observable<any> {
